@@ -98,15 +98,22 @@ async function init() {
 
     const svg = d3.select("#viz-container").append("svg")
         .attr("width", width)
-        .attr("height", height)
-        .call(d3.zoom().on("zoom", (event) => {
-            g.attr("transform", event.transform);
-        }))
-        .append("g");
+        .attr("height", height);
 
-    // Initial center transform
+    // 1. Create a Content Group
     const g = svg.append("g")
-        .attr("transform", `translate(${width / 2},${height / 2})`);
+        .attr("id", "hive-container");
+
+    // Define Zoom Behavior
+    const zoom = d3.zoom()
+        .scaleExtent([0.1, 5]) // Reasonable zoom limits
+        .on("zoom", (event) => {
+            g.attr("transform", event.transform);
+        });
+
+    // Apply zoom to SVG
+    svg.call(zoom);
+
 
     // Add Drop Shadow Filter
     const defs = svg.append("defs");
@@ -239,6 +246,42 @@ async function init() {
 
     // Generate Filter Controls
     createFilterControls(processNames, config.colors);
+
+    // 2. Implement 'Auto-Center' Logic
+    centerMap(svg, g, zoom, width, height);
+
+    // 3. Zoom Behavior: Handle Window Resize
+    window.onresize = () => {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+        svg.attr("width", newWidth).attr("height", newHeight);
+        centerMap(svg, g, zoom, newWidth, newHeight);
+    };
+}
+
+// Helper to Auto-Center based on BBox
+function centerMap(svg, g, zoom, width, height) {
+    const bounds = g.node().getBBox();
+    const fullWidth = width;
+    const fullHeight = height;
+
+    // Calculate mid-point of the content
+    const midX = bounds.x + bounds.width / 2;
+    const midY = bounds.y + bounds.height / 2;
+
+    // Calculate scale to fit (optional, but good practice)
+    // Add padding (e.g. 0.9 factor)
+    const scale = 0.85;
+
+    // Calculate translation to center the mid-point
+    const x = (fullWidth / 2) - (scale * midX);
+    const y = (fullHeight / 2) - (scale * midY);
+
+    const transform = d3.zoomIdentity
+        .translate(x, y)
+        .scale(scale);
+
+    svg.call(zoom.transform, transform);
 }
 
 function createFilterControls(processNames, colors) {
