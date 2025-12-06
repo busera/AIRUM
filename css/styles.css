@@ -235,22 +235,27 @@ html {
     text-transform: uppercase;
     margin: 0;
     line-height: 1;
-    background: linear-gradient(135deg, #4682B4, #DC143C);
+    /* Cyan/Blue Gradient */
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
     -webkit-background-clip: text;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
     color: transparent;
     letter-spacing: 2px;
 }
 
 .sub-title {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
+    /* Increased size slightly */
     font-weight: 500;
     text-transform: uppercase;
     color: #ccc;
-    letter-spacing: 3px;
-    opacity: 0.8;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    letter-spacing: 4px;
+    /* Increased tracking */
+    opacity: 0.9;
+    /* Subtle cyan glow */
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
 }
 
 .modal-header {
