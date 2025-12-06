@@ -42,10 +42,114 @@
             <div class="modal-title" style="margin-bottom: 20px; border-bottom: 1px solid #ddd;">About this Project
             </div>
             <div class="modal-body">
-                <h4>Methodology</h4>
-                <p>Text regarding data sources and approach will go here.</p>
-                <p>This visualization clusters AI risks based on their process groups using a spiral packing algorithm.
-                </p>
+                <h3>Methodology: Building the AI Risk Universe Matrix (AIRUM)</h3>
+                <p>To create a holistic and actionable view of AI risks, a dual-path methodology was employed. This
+                    approach enabled the identification of the most common <strong>Risk Domains</strong> (categorized as
+                    Process Names) and <strong>Sub-Domains</strong> (categorized as Sub-Process Names) by triangulating
+                    data from two distinct types of sources:</p>
+
+                <h4>1. Direct Risk Identification (Threat-Centric Approach)</h4>
+                <p>For sources that explicitly catalog known failures, vulnerabilities, and attacks (such as the MIT AI
+                    Risk Repository and OWASP), risks were extracted directly.</p>
+                <ul>
+                    <li><strong>Method:</strong> Individual threats (e.g., "Prompt Injection," "Automation Bias") were
+                        mapped to broader risk domains.</li>
+                    <li><strong>Source Logic:</strong> <span class="code-snippet">"Here is a known failure mode ->
+                            Categorize it into the Risk Universe."</span></li>
+                </ul>
+
+                <h4>2. Reverse Engineering from Controls (Control-Centric Approach)</h4>
+                <p>For governance frameworks and standards (such as ISO 42001 and Gartner), which primarily list
+                    requirements or controls, a retrospective engineering process was utilized.</p>
+                <ul>
+                    <li><strong>Method:</strong> Each recommended control or maturity benchmark was analyzed to
+                        determine: "What specific negative outcome does this control prevent?" or "What risk
+                        materializes if this requirement is absent?"</li>
+                    <li><strong>Source Logic:</strong> <span class="code-snippet">"Here is a required control (e.g.,
+                            Human Oversight) -> The implied risk is 'Lack of Accountability' or 'Over-reliance on
+                            Systems'."</span></li>
+                </ul>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+
+                <h3>Sources Consulted</h3>
+                <p>The AIRUM is built upon the following authoritative sources, encompassing strategic governance,
+                    organizational maturity, and technical security.</p>
+
+                <h4>A. Strategic Governance & Management Standards</h4>
+                <p>These sources were used to define the high-level <em>Process Names</em> (Domains) related to
+                    strategy, compliance, and organizational structure. By reverse-engineering the rigorous controls in
+                    ISO and the strategic guidance from Gartner, systemic risks such as "Strategic Misalignment" and
+                    "Governance Failure" were identified.</p>
+                <ul>
+                    <li><strong>ISO/IEC 42001:2023 - Artificial intelligence — Management system</strong>: The global
+                        standard for AI governance. Its clauses and controls were analyzed to identify the
+                        organizational risks associated with failing to Plan, Do, Check, and Act.<br>
+                        Source: <a href="https://www.iso.org/standard/42001"
+                            target="_blank">https://www.iso.org/standard/42001</a>
+                    </li>
+                    <li><strong>Gartner® Reference Guide for AI Strategy | Bounteous</strong>: Used to align AI strategy
+                        with business outcomes and define strategic risk domains.<br>
+                        Source: <a href="https://www.bounteous.com/insights/gartner/"
+                            target="_blank">https://www.bounteous.com/insights/gartner/</a>
+                    </li>
+                    <li><strong>Gartner Research Documents</strong>: Extensive research on AI Trust, Risk, and Security
+                        Management (AI TRiSM) and Generative AI governance was utilized to identify operational and
+                        strategic blind spots.
+                        <ul>
+                            <li>Gartner Research Document (ID: 6676234): <a
+                                    href="https://www.gartner.com/document-reader/document/6676234?ref=pubsite"
+                                    target="_blank">https://www.gartner.com/document-reader/document/6676234?ref=pubsite</a>
+                            </li>
+                            <li>Gartner Research Document (ID: 6570102): <a
+                                    href="https://www.gartner.com/document-reader/document/6570102?ref=pubsite"
+                                    target="_blank">https://www.gartner.com/document-reader/document/6570102?ref=pubsite</a>
+                            </li>
+                            <li>Gartner Research Document (ID: 6592003): <a
+                                    href="https://www.gartner.com/document-reader/document/6592003?ref=pubsite"
+                                    target="_blank">https://www.gartner.com/document-reader/document/6592003?ref=pubsite</a>
+                            </li>
+                            <li>Gartner Research Document (ID: 6885067): <a
+                                    href="https://www.gartner.com/document-reader/document/6885067?ref=pubsite"
+                                    target="_blank">https://www.gartner.com/document-reader/document/6885067?ref=pubsite</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>B. Organizational Maturity & Readiness</h4>
+                <p>Maturity models were examined to identify risks related to an organization's capability to manage AI,
+                    focusing on process immaturity and resource allocation.</p>
+                <ul>
+                    <li><strong>MITRE AI Maturity Model and Organizational Assessment Tool Guide</strong>: This guide
+                        was used to identify risks stemming from a lack of organizational readiness.<br>
+                        Source: <a
+                            href="https://www.mitre.org/news-insights/publication/mitre-ai-maturity-model-and-organizational-assessment-tool-guide"
+                            target="_blank">https://www.mitre.org/news-insights/publication/mitre-ai-maturity-model-and-organizational-assessment-tool-guide</a>
+                    </li>
+                </ul>
+
+                <h4>C. Technical Security & Threat Landscapes</h4>
+                <p>These sources were used to populate the <em>Sub-Process Names</em> (Sub-Domains) with specific,
+                    actionable technical risks, utilizing the threat-centric extraction path.</p>
+                <ul>
+                    <li><strong>The MIT AI Risk Repository</strong>: A comprehensive database of documented AI risks
+                        used to validate domains against real-world failure cases.<br>
+                        Source: <a href="https://airisk.mit.edu/" target="_blank">https://airisk.mit.edu/</a>
+                    </li>
+                    <li><strong>OWASP Top 10 for Large Language Model Applications</strong>: Critical vulnerabilities
+                        specific to Generative AI, such as jailbreaking and data leakage, were extracted from this
+                        source.<br>
+                        Source: <a href="https://genai.owasp.org/llm-top-10/"
+                            target="_blank">https://genai.owasp.org/llm-top-10/</a>
+                    </li>
+                    <li><strong>OWASP Machine Learning Security Top 10</strong>: This list was used to identify
+                        fundamental security risks in predictive ML systems, such as data poisoning and model
+                        inversion.<br>
+                        Source: <a href="https://owasp.org/www-project-machine-learning-security-top-10/"
+                            target="_blank">https://owasp.org/www-project-machine-learning-security-top-10/</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
