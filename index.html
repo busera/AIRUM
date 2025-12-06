@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Risk Universe</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- SheetJS -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+    <div id="tooltip" class="tooltip" style="opacity: 0;"></div>
+
+    <!-- Deep Dive Overlay -->
+    <div id="detail-overlay" class="overlay" style="display: none;">
+        <div class="overlay-content">
+            <button id="close-btn" class="close-btn">&times;</button>
+            <div id="modal-header" class="modal-header">Process Name</div>
+            <div id="modal-subheader" class="modal-subheader">Sub-Process Name</div>
+            <div id="modal-title" class="modal-title">Risk Name</div>
+            <div class="modal-body">
+                <h4>Description</h4>
+                <p id="modal-desc">Risk Description goes here...</p>
+
+                <h4>Sources and References</h4>
+                <p id="modal-sources">References go here...</p>
+
+                <h4>Links</h4>
+                <p id="modal-links">Links go here...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="filter-container"></div>
+    <div id="viz-container"></div>
+    <script src="./js/main.js"></script>
+</body>
+
+</html>

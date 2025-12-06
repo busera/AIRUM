@@ -1,0 +1,65 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "OpenCode": {
+      "npm": "@ai-sdk/openai-compatible",
+      "models": {
+        "big-pickle": {
+          "reasoning": false,
+          "tools": true,
+          "description": "🥒 FREE. Daily Driver. Stealth model (GLM-4 based?)."
+        },
+        "grok-code-fast": {
+          "id": "grok-code-fast-1",
+          "reasoning": false,
+          "tools": true,
+          "description": "⚡ FREE. Grok Code Fast. Use for instant scripts/one-liners."
+        },
+        "gpt-5-nano": {
+          "id": "gpt-5-nano",
+          "reasoning": false,
+          "tools": true,
+          "description": "🧬 FREE. GPT-5 Nano. Ultra-lightweight fallback."
+        },
+        "qwen3-coder-480b": {
+          "id": "qwen3-coder-480b",
+          "reasoning": true,
+          "tools": true,
+          "description": "🏗️ BUILDER (Zen). Cheap ($0.45/M). Best Cost/Performance."
+        },
+        "claude-sonnet-4-5": {
+          "id": "claude-sonnet-4-5",
+          "reasoning": true,
+          "tools": true,
+          "description": "🧠 ARCHITECT (Paid). $3.00/M. Max Intelligence."
+        }
+      }
+    },
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "qwen3-coder-480b-cloud": {
+          "id": "qwen3-coder:480b-cloud",
+          "reasoning": true,
+          "tools": true,
+          "description": "☁️ BUILDER (Ollama Cloud). Alternative provider."
+        },
+        "qwen3-coder-30b": {
+          "id": "qwen3-coder:30b",
+          "reasoning": true,
+          "tools": true,
+          "description": "🏎️ TURBO (Local). 30B Model. Private & Fast."
+        },
+        "kimi-k2-thinking": {
+          "id": "kimi-k2:1t-cloud",
+          "reasoning": true,
+          "tools": true,
+          "description": "🧠 ARCHITECT (Budget). High reasoning, low cost ($2.50/M Output)."
+        }
+      }
+    }
+  }
+}
