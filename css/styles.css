@@ -23,6 +23,8 @@ html {
     z-index: 5;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     flex-shrink: 0;
+    position: relative;
+    /* For absolute positioning if needed, or just flex */
 }
 
 .filter-btn {
@@ -46,6 +48,23 @@ html {
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
     transform: scale(1.05);
 }
+
+/* Methodology Button Style */
+.about-btn {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: #fff;
+    margin-left: auto;
+    /* Push to right if in flex container with others centered? */
+    /* If container is verify justify-content: center, margin-left: auto might not work as expected unless we structure it. 
+       Let's stick to the button visual style first. */
+}
+
+.about-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #fff;
+}
+
 
 #viz-container {
     flex-grow: 1;
@@ -105,7 +124,7 @@ html {
     color: #bbb;
 }
 
-/* Deep Dive Overlay Styles */
+/* Deep Dive & Info Overlay Styles */
 .overlay {
     position: fixed;
     top: 0;
@@ -113,17 +132,13 @@ html {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.85);
-    /* Dark semi-transparent background */
     z-index: 1000;
-    /* High z-index */
     display: flex;
-    /* Flex to center content */
     align-items: center;
     justify-content: center;
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
-    /* Default none when hidden */
 }
 
 .overlay.active {
@@ -134,14 +149,12 @@ html {
 .overlay-content {
     background-color: #fff;
     color: #333;
-    /* Dark text for readability on white */
     width: 90%;
     max-width: 800px;
     max-height: 90vh;
     border-radius: 8px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     overflow-y: auto;
-    /* Allow scrolling within card */
     position: relative;
     padding: 40px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

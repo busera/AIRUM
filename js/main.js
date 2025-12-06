@@ -285,6 +285,12 @@ function createFilterControls(processNames, colors) {
                     .style("pointer-events", (d) => d["Process Name"] === proc ? "all" : "none");
             });
     });
+
+    // Add About/Methodology Button
+    container.append("button")
+        .attr("class", "filter-btn about-btn")
+        .text("Methodology")
+        .on("click", openInfoModal);
 }
 
 async function loadData() {
@@ -389,6 +395,39 @@ function closeDetailView() {
         .on("end", () => {
             overlay.style("display", "none").classed("active", false);
             d3.select("body").style("overflow", null); // Re-enable scroll
+        });
+}
+
+// Info Modal Logic
+function openInfoModal() {
+    const overlay = d3.select("#info-modal");
+
+    // Show Overlay
+    overlay.style("display", "flex")
+        .transition().duration(300)
+        .style("opacity", 1)
+        .on("end", () => {
+            overlay.classed("active", true);
+        });
+
+    d3.select("body").style("overflow", "hidden");
+
+    // Handlers
+    d3.select("#info-close-btn").on("click", closeInfoModal);
+    overlay.on("click", function (event) {
+        if (event.target === this) {
+            closeInfoModal();
+        }
+    });
+}
+
+function closeInfoModal() {
+    const overlay = d3.select("#info-modal");
+    overlay.transition().duration(300)
+        .style("opacity", 0)
+        .on("end", () => {
+            overlay.style("display", "none").classed("active", false);
+            d3.select("body").style("overflow", null);
         });
 }
 
