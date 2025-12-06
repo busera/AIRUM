@@ -269,19 +269,22 @@ function centerMap(svg, g, zoom, width, height) {
     const midX = bounds.x + bounds.width / 2;
     const midY = bounds.y + bounds.height / 2;
 
-    // Calculate scale to fit (optional, but good practice)
-    // Add padding (e.g. 0.9 factor)
+    // Calculate scale to fit
     const scale = 0.85;
 
-    // Calculate translation to center the mid-point
+    // Calculate translation to center the mid-point AND sync with D3 Zoom
+    // We need: (width/2, height/2) = translate + scale * (midX, midY)
+    // Therefore: translate = (width/2, height/2) - scale * (midX, midY)
     const x = (fullWidth / 2) - (scale * midX);
     const y = (fullHeight / 2) - (scale * midY);
 
-    const transform = d3.zoomIdentity
+    // Create the transform object
+    const initialTransform = d3.zoomIdentity
         .translate(x, y)
         .scale(scale);
 
-    svg.call(zoom.transform, transform);
+    // Apply via Zoom Handler (Crucial Step: Updates D3 internal state AND visual)
+    svg.call(zoom.transform, initialTransform);
 }
 
 function createFilterControls(processNames, colors) {
