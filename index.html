@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIRUM - AI Risk Universe Matrix</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <!-- Google Fonts: Rajdhani -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <!-- SheetJS -->
@@ -154,8 +156,27 @@
         </div>
     </div>
 
-    <header>
-        <h1>AIRUM - AI Risk Universe Matrix</h1>
+    <header class="cyber-header">
+        <div class="header-inner">
+            <!-- Spinning SVG Hexagon -->
+            <svg class="hex-icon" viewBox="0 0 100 100" width="50" height="50">
+                <polygon points="50 5, 95 27.5, 95 72.5, 50 95, 5 72.5, 5 27.5" stroke="url(#hexGradient)"
+                    stroke-width="4" fill="none" />
+                <!-- Inner Hex -->
+                <polygon points="50 25, 72 36, 72 64, 50 75, 28 64, 28 36" fill="#4682B4" opacity="0.6" />
+                <defs>
+                    <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4682B4;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#DC143C;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            <div class="title-wrapper">
+                <h1 class="main-title">AIRUM</h1>
+                <span class="sub-title">AI RISK UNIVERSE MATRIX</span>
+            </div>
+        </div>
     </header>
 
     <div id="filter-container"></div>

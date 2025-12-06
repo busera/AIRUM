@@ -177,6 +177,82 @@ html {
     color: #000;
 }
 
+/* Cyber-Tech Header */
+.cyber-header {
+    width: 100%;
+    margin-bottom: 20px;
+    /* Space before controls */
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+}
+
+/* Gradient Border Bottom Effect */
+.cyber-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #444, transparent);
+    width: 60%;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Spinning Hexagon */
+.hex-icon {
+    animation: spin 10s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.main-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1;
+    background: linear-gradient(135deg, #4682B4, #DC143C);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 2px;
+}
+
+.sub-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #ccc;
+    letter-spacing: 3px;
+    opacity: 0.8;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
 .modal-header {
     font-size: 14px;
     text-transform: uppercase;
