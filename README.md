@@ -2,9 +2,7 @@
 
 An interactive, honeycomb-style visualization of AI risks, arranged in continuous "onion layers" by clustered processes. This project maps AI risk sub-processes into a tangible grid, providing a "Deep Dive" view into descriptions and sources.
 
-**[View Live Demo](https://YOUR-USERNAME.github.io/REPO-NAME/)** *(Replace with your actual GitHub Pages URL)*
-
-![Visualization Preview](assets/preview.png) *(Optional: Add a screenshot here)*
+**[View Live Demo](https://busera.github.io/AIRUM/)**
 
 ## features
 
