@@ -367,7 +367,7 @@ function showTooltip(event, d) {
     // NIST Stage Logic
     const nistStage = d["NIST AI Lifecycle Stage"];
     const nistHtml = nistStage
-        ? `<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #555; font-size: 0.85em; color: #bbb;">NIST Stage: <span style="color: #fff; font-weight: 600;">${nistStage}</span></div>`
+        ? `<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #555; font-size: 0.85em; color: #bbb;">AI Lifecycle Stage (by NIST): <span style="color: #fff; font-weight: 600;">${nistStage}</span></div>`
         : "";
 
     // User requested: Process Name, "Name on Hexagon" (Risk Name), Risk Description
@@ -408,7 +408,7 @@ function openDetailView(d) {
     // Populate NIST Badge
     const nistValue = d["NIST AI Lifecycle Stage"];
     if (nistValue) {
-        nistBadge.text(`NIST Stage: ${nistValue}`)
+        nistBadge.text(`AI Lifecycle Stage (by NIST): ${nistValue}`)
             .style("display", "inline-block");
     } else {
         nistBadge.style("display", "none");
