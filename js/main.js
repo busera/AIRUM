@@ -364,11 +364,18 @@ function showTooltip(event, d) {
     const tooltip = d3.select("#tooltip");
     tooltip.transition().duration(200).style("opacity", 0.9);
 
+    // NIST Stage Logic
+    const nistStage = d["NIST AI Lifecycle Stage"];
+    const nistHtml = nistStage
+        ? `<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #555; font-size: 0.85em; color: #bbb;">NIST Stage: <span style="color: #fff; font-weight: 600;">${nistStage}</span></div>`
+        : "";
+
     // User requested: Process Name, "Name on Hexagon" (Risk Name), Risk Description
     tooltip.html(`
         <div style="margin-bottom: 5px; color: #aaa; font-size: 0.9em;">${d["Process Name"] || "Process"}</div>
         <div style="font-weight: bold; margin-bottom: 8px; font-size: 1.1em;">${d["Risk Name"] || d["Sub-Process Name"] || "Risk"}</div>
         <div style="font-size: 0.9em; line-height: 1.4;">${d["Risk Description"] || "No description available."}</div>
+        ${nistHtml}
     `)
         .style("left", (event.pageX + 15) + "px")
         .style("top", (event.pageY - 28) + "px");
@@ -388,6 +395,24 @@ function openDetailView(d) {
         .text(d["Process Name"] || "Process");
 
     d3.select("#modal-subheader").text(d["Sub-Process Name"] || "");
+
+    // Inject NIST Badge if not present
+    let nistBadge = d3.select("#modal-nist-badge");
+    if (nistBadge.empty()) {
+        nistBadge = d3.select(".overlay-content")
+            .insert("div", "#modal-title") // Insert before Title
+            .attr("id", "modal-nist-badge")
+            .attr("class", "nist-badge");
+    }
+
+    // Populate NIST Badge
+    const nistValue = d["NIST AI Lifecycle Stage"];
+    if (nistValue) {
+        nistBadge.text(`NIST Stage: ${nistValue}`)
+            .style("display", "inline-block");
+    } else {
+        nistBadge.style("display", "none");
+    }
 
     // Title: Risk Name preferred, else sub-process
     d3.select("#modal-title").text(d["Risk Name"] || d["Risk Title"] || d["Risk"] || d["Sub-Process Name"] || "Risk Detail");
