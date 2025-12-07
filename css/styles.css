@@ -147,8 +147,10 @@ html {
 }
 
 .overlay-content {
-    background-color: #fff;
-    color: #333;
+    background-color: #222;
+    /* Dark Background */
+    color: #eee;
+    /* Light Text */
     width: 90%;
     max-width: 800px;
     max-height: 90vh;
@@ -158,6 +160,8 @@ html {
     position: relative;
     padding: 40px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: 1px solid #444;
+    /* Subtle border */
 }
 
 .close-btn {
@@ -271,30 +275,40 @@ html {
 
 .modal-subheader {
     font-size: 18px;
-    color: #666;
+    color: #bbb;
+    /* Light Grey */
     margin-bottom: 10px;
 }
 
 .modal-title {
     font-size: 28px;
     font-weight: 700;
-    margin-bottom: 25px;
-    color: #111;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 15px;
+    margin-bottom: 5px !important;
+    /* Reduce gap below text */
+    color: #fff;
+    /* White */
+    border-bottom: none !important;
+    /* Removed border */
+    padding-bottom: 0 !important;
 }
 
-.modal-body h4 {
+.modal-body h4,
+.modal-body h5 {
     margin-top: 20px;
     margin-bottom: 10px;
-    font-size: 16px;
-    color: #444;
+    font-size: 0.75rem;
+    /* Small */
+    color: #888;
+    /* Grey */
     text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
 }
 
 .modal-body p {
     line-height: 1.6;
-    color: #555;
+    color: #ccc;
+    /* Light Grey */
     margin-bottom: 15px;
 }
 
@@ -328,6 +342,7 @@ header h1 {
     letter-spacing: 1px;
     text-transform: uppercase;
 }
+
 /* NIST Badge Style */
 .nist-badge {
     display: inline-block;
@@ -346,7 +361,8 @@ header h1 {
 /* NIST Filter Container & Buttons */
 #nist-filter-container {
     width: 100%;
-    padding: 5px 10px 15px 10px; /* slightly less top padding, more bottom */
+    padding: 5px 10px 15px 10px;
+    /* slightly less top padding, more bottom */
     background: #222;
     display: flex;
     justify-content: center;
@@ -388,15 +404,18 @@ header h1 {
 
 /* Updated NIST Badge Style per request */
 .nist-badge {
-    background-color: #444 !important; /* Override previous */
+    background-color: #444 !important;
+    /* Override previous */
     color: #fff !important;
     padding: 4px 12px !important;
     border-radius: 12px !important;
     font-size: 0.85rem !important;
     display: inline-block !important;
     margin-bottom: 15px !important;
-    border: none !important; /* Removing previous border */
-    text-transform: none !important; /* Resetting transform if needed */
+    border: none !important;
+    /* Removing previous border */
+    text-transform: none !important;
+    /* Resetting transform if needed */
     letter-spacing: normal !important;
 }
 
@@ -413,11 +432,137 @@ header h1 {
     width: auto;
     text-align: right;
     padding: 5px;
-    background: transparent; /* Clean look */
-    color: #555; /* Slightly darker to be subtle */
-    font-size: 11px; /* Smaller */
+    background: transparent;
+    /* Clean look */
+    color: #555;
+    /* Slightly darker to be subtle */
+    font-size: 11px;
+    /* Smaller */
     z-index: 100;
     pointer-events: none;
     font-weight: 500;
     opacity: 0.7;
+}
+
+/* Enhanced Source List (Reference Cards) */
+.source-list {
+    list-style-type: none;
+    padding: 10px 0 0 0;
+    margin: 15px 0 0 0;
+    border-top: none !important;
+    /* Remove border to fix double lines */
+}
+
+/* Remove any default borders from the footer or source container per user request */
+.modal-footer,
+#modal-sources-section,
+.source-list-container {
+    border: none !important;
+    border-top: none !important;
+    box-shadow: none !important;
+}
+
+.source-list li {
+    background: rgba(255, 255, 255, 0.05);
+    /* Faint grey card */
+    margin-bottom: 8px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease;
+}
+
+.source-list li:hover {
+    background: rgba(255, 255, 255, 0.1);
+    /* Lighten on hover */
+}
+
+/* Force high-contrast grey for ALL links inside the Detail Modal */
+#detail-overlay .modal-content a,
+#detail-overlay .source-list a,
+#detail-overlay a {
+    color: #e0e0e0 !important;
+    /* Force Light Grey */
+    text-decoration: underline !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#detail-overlay .modal-content a:hover,
+#detail-overlay .source-list a:hover,
+#detail-overlay a:hover {
+    color: #ffffff !important;
+    /* Force White */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    /* Subtle glow */
+}
+
+.external-icon {
+    font-size: 0.8em;
+    margin-left: 5px;
+    color: #e0e0e0;
+    /* Match link color */
+    text-decoration: none;
+    /* No underline on icon usually, but ok inside u/l */
+}
+
+/* Modal Separator Unification (Standard Divider) */
+.modal-divider {
+    height: 1px;
+    background-color: #444;
+    /* Dark Grey */
+    margin: 20px 0;
+    margin-top: 5px !important;
+    /* Pull line up closer to title */
+    border: none;
+    width: 100%;
+    display: block;
+}
+
+/* Modal Separator Unification (for hr tags) */
+.modal-content hr,
+.overlay-content hr {
+    border: 0;
+    height: 1px;
+    background: #444;
+    /* Dark Grey Line */
+    margin: 20px 0;
+    opacity: 0.6;
+}
+
+
+/* Tag Badges */
+.tag-badge {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 10px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    /* Prevent wrap */
+}
+
+.tag-badge.public {
+    background-color: #009688;
+    /* Teal */
+}
+
+.tag-badge.internal {
+    background-color: #FF9800;
+    /* Amber */
+    color: #000;
+}
+
+/* Source Detail Item */
+.source-detail-item {
+    padding: 0;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #ccc;
+    /* Slightly lighter for readability without bg */
+    line-height: 1.4;
 }

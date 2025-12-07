@@ -1,0 +1,12 @@
+AIRUM Sources
+
+
+Gartner - AI Roadmap Toolkit (public) | https://www.gartner.com/en/chief-information-officer/research/ai-maturity-model-toolkit || 
+Gartner - AI Strategy Reference Guide (internal) | https://www.gartner.com/document-reader/document/5938007?ref=pubsite || 
+Gartner - AI Strategy for Business (public) | https://www.gartner.com/en/articles/ai-strategy-for-business || 
+Gartner - The Pillars of a Successful Artificial Intelligence Strategy (internal) | https://www.gartner.com/document-reader/document/5373763? || 
+Gartner - Reference Guide for AI Strategy (internal) | https://www.gartner.com/document-reader/document/6676234?ref=pubsite || 
+ISO/IEC 42001:2023 - Information technology — Artificial intelligence — Management syste (public) | https://www.iso.org/standard/42001 || 
+NIST - AI Risk Management Framework (public) | https://www.nist.gov/itl/ai-risk-management-framework
+
+

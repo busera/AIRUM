@@ -150,7 +150,7 @@ async function init() {
 
     // Helper to extract ID
     function getProcessId(d) {
-        const name = d["Process Name"] || "";
+        const name = d.ProcessName || "";
         const match = name.match(/^(\d+)\./);
         return match ? parseInt(match[1]) : 999; // Default to end if no number
     }
@@ -162,12 +162,12 @@ async function init() {
             return idA - idB;
         }
         // Secondary sort by Sub-Process or Risk Name for consistency
-        return (a["Process Name"] || "").localeCompare(b["Process Name"] || "");
+        return (a.ProcessName || "").localeCompare(b.ProcessName || "");
     });
 
     // Assign Colors based on Process Unique Values
     // Distinct processes
-    const processNamesSet = new Set(processedData.map(d => d["Process Name"]));
+    const processNamesSet = new Set(processedData.map(d => d.ProcessName));
     const processNames = Array.from(processNamesSet);
     // Since data is sorted by ID, processNames will also be in ID order (1, 2, 3...)
 
@@ -181,7 +181,7 @@ async function init() {
 
         // Find color
         // map Process Name to index in our sorted list
-        const pIndex = processNames.indexOf(d["Process Name"]);
+        const pIndex = processNames.indexOf(d.ProcessName);
         const color = config.colors[pIndex % config.colors.length];
 
         return {
@@ -198,7 +198,7 @@ async function init() {
         .append("g")
         .attr("class", "hex-group")
         .attr("transform", d => `translate(${d.x},${d.y})`)
-        .attr("data-process", d => d["Process Name"])
+        .attr("data-process", d => d.ProcessName)
         .on("mouseover", function (event, d) {
             // Pop & Zoom Effect
             const el = d3.select(this);
@@ -246,14 +246,14 @@ async function init() {
         .style("display", "flex")
         .style("align-items", "center")
         .style("justify-content", "center")
-        .text(d => d["Risk Name"] || d["Risk Title"] || d["Risk"] || d["Sub-Process Name"] || "");
+        .text(d => d.RiskName);
 
     // Generate Process Filter Controls
     createFilterControls(processNames, config.colors);
 
     // Generate NIST Filter Controls
     // Extract unique NIST stages
-    const nistStagesSet = new Set(processedData.map(d => d["NIST AI Lifecycle Stage"]).filter(x => x)); // filter out undefined/null
+    const nistStagesSet = new Set(processedData.map(d => d.NIST_Stage).filter(x => x && x !== 'N/A')); // filter out undefined/null/N/A
     const nistStages = Array.from(nistStagesSet).sort();
     createNISTFilterControls(nistStages);
 
@@ -381,15 +381,25 @@ function updateViz() {
     d3.selectAll(".hex-group")
         .transition().duration(750)
         .style("opacity", (d) => {
-            const matchesProcess = (selectedProcess === 'All' || d["Process Name"] === selectedProcess);
-            const matchesNIST = (selectedNIST === 'All' || d["NIST AI Lifecycle Stage"] === selectedNIST);
+            const matchesProcess = (selectedProcess === 'All' || d.ProcessName === selectedProcess);
+            const matchesNIST = (selectedNIST === 'All' || d.NIST_Stage === selectedNIST);
             return (matchesProcess && matchesNIST) ? 1 : 0.1;
         })
         .style("pointer-events", (d) => {
-            const matchesProcess = (selectedProcess === 'All' || d["Process Name"] === selectedProcess);
-            const matchesNIST = (selectedNIST === 'All' || d["NIST AI Lifecycle Stage"] === selectedNIST);
+            const matchesProcess = (selectedProcess === 'All' || d.ProcessName === selectedProcess);
+            const matchesNIST = (selectedNIST === 'All' || d.NIST_Stage === selectedNIST);
             return (matchesProcess && matchesNIST) ? "all" : "none";
         });
+}
+
+// Data Normalization Helper
+function getValue(row, possibleKeys) {
+    const rowKeys = Object.keys(row);
+    // Find a key in the row that loosely matches one of our possible keys
+    const match = rowKeys.find(k =>
+        possibleKeys.some(pk => k.trim().toLowerCase() === pk.toLowerCase())
+    );
+    return match ? row[match] : null;
 }
 
 async function loadData() {
@@ -399,7 +409,32 @@ async function loadData() {
         const buf = await response.arrayBuffer();
         const wb = XLSX.read(buf);
         const ws = wb.Sheets[wb.SheetNames[0]];
-        return XLSX.utils.sheet_to_json(ws);
+        const rawData = XLSX.utils.sheet_to_json(ws);
+
+        // Normalize Data
+        const cleanData = rawData.map(row => {
+            return {
+                // Check for variations like "Process Name", "Process Group", "Process"
+                ProcessName: getValue(row, ['Process Name', 'Process', 'Risk Process']) || 'Unknown Process',
+                // Check for "Sub-Process Name", "Sub Process"
+                SubProcessName: getValue(row, ['Sub-Process Name', 'Sub Process']) || 'Unknown Sub-Process',
+                // Check for "Risk Name", "Risk", "Risk Title"
+                RiskName: String(getValue(row, ['Risk Name', 'Risk', 'Risk Title']) || 'Unknown Risk'),
+                // Check for "Risk Description", "Description"
+                RiskDescription: String(getValue(row, ['Risk Description', 'Description', 'Desc']) || ''),
+                // Check for "NIST AI Lifecycle Stage", "NIST Stage", "NIST"
+                NIST_Stage: String(getValue(row, ['NIST AI Lifecycle Stage', 'NIST Stage', 'NIST']) || 'N/A'),
+                // Check for "Sources" (Text Citations) - "Sources and References" column
+                SourcesText: String(getValue(row, ['Sources and References', 'Sources', 'Source', 'References', 'Citation']) || ''),
+                // Check for "URL Sources" (Links) - Force String
+                // Added variations: URL Source, Link Sources, Links
+                SourceLinks: String(getValue(row, ['URL Sources', 'URL Source', 'Link Sources', 'Links']) || '')
+            };
+        });
+
+        console.log('First Clean Row:', cleanData[0]);
+        return cleanData;
+
     } catch (e) {
         // Fallback or error logging
         console.error("Data load error", e);
@@ -418,16 +453,16 @@ function showTooltip(event, d) {
     tooltip.transition().duration(200).style("opacity", 0.9);
 
     // NIST Stage Logic
-    const nistStage = d["NIST AI Lifecycle Stage"];
-    const nistHtml = nistStage
+    const nistStage = d.NIST_Stage;
+    const nistHtml = (nistStage && nistStage !== 'N/A')
         ? `<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #555; font-size: 0.85em; color: #bbb;">AI Lifecycle Stage (by NIST): <span style="color: #fff; font-weight: 600;">${nistStage}</span></div>`
         : "";
 
     // User requested: Process Name, "Name on Hexagon" (Risk Name), Risk Description
     tooltip.html(`
-        <div style="margin-bottom: 5px; color: #aaa; font-size: 0.9em;">${d["Process Name"] || "Process"}</div>
-        <div style="font-weight: bold; margin-bottom: 8px; font-size: 1.1em;">${d["Risk Name"] || d["Sub-Process Name"] || "Risk"}</div>
-        <div style="font-size: 0.9em; line-height: 1.4;">${d["Risk Description"] || "No description available."}</div>
+        <div style="margin-bottom: 5px; color: #aaa; font-size: 0.9em;">${d.ProcessName}</div>
+        <div style="font-weight: bold; margin-bottom: 8px; font-size: 1.1em;">${d.RiskName}</div>
+        <div style="font-size: 0.9em; line-height: 1.4;">${d.RiskDescription || "No description available."}</div>
         ${nistHtml}
     `)
         .style("left", (event.pageX + 15) + "px")
@@ -445,48 +480,140 @@ function openDetailView(d) {
     // Populate Content
     d3.select("#modal-header")
         .style("color", d.color) // Match process color
-        .text(d["Process Name"] || "Process");
+        .text(d.ProcessName);
 
-    d3.select("#modal-subheader").text(d["Sub-Process Name"] || "");
+    d3.select("#modal-subheader").text(d.SubProcessName || "");
+
+    // Inject Divider before Modal Body if not present
+    let topDivider = d3.select("#top-divider");
+    if (topDivider.empty()) {
+        topDivider = d3.select(".overlay-content")
+            .insert("div", ".modal-body")
+            .attr("class", "modal-divider")
+            .attr("id", "top-divider");
+    }
 
     // Inject NIST Badge Container if not present
     let metaRow = d3.select(".modal-meta-row");
     if (metaRow.empty()) {
         metaRow = d3.select(".overlay-content")
-            .insert("div", "#modal-title") // Insert before Title (which is after Subheader)
+            .insert("div", "#modal-title") // Insert before Risk Name
             .attr("class", "modal-meta-row");
     }
 
     // Populate NIST Badge
-    const nistValue = d["NIST AI Lifecycle Stage"];
-    if (nistValue) {
-        metaRow.html(`<span class="nist-badge">NIST Stage: ${nistValue}</span>`)
+    const nistValue = d.NIST_Stage;
+    if (nistValue && nistValue !== 'N/A') {
+        metaRow.html(`<span class="nist-badge">AI Lifecycle Stage: ${nistValue}</span>`)
             .style("display", "block");
     } else {
         metaRow.style("display", "none");
     }
 
     // Title: Risk Name preferred, else sub-process
-    d3.select("#modal-title").text(d["Risk Name"] || d["Risk Title"] || d["Risk"] || d["Sub-Process Name"] || "Risk Detail");
+    d3.select("#modal-title").text(d.RiskName || d.SubProcessName || "Risk Detail");
 
-    d3.select("#modal-desc").text(d["Risk Description"] || "No description provided.");
+    d3.select("#modal-desc").text(d.RiskDescription || "No description provided.");
 
-    // Sources and References
-    const sources = d["Sources and References"] || d["Sources"] || d["References"];
-    if (sources) {
-        d3.select("#modal-sources").text(sources).style("display", "block");
-        d3.select("#modal-sources").node().previousElementSibling.style.display = "block"; // Show header
+    // --- Sources and References (Text) ---
+    const sourcesText = d.SourcesText;
+    const sourcesContainer = d3.select("#modal-sources");
+    // The specific header for this section is the H4 immediately preceding the #modal-sources div
+    const sourcesHeader = sourcesContainer.node().previousElementSibling;
+
+    if (sourcesText && typeof sourcesText === 'string' && sourcesText.trim().length > 0) {
+        // Clear previous
+        sourcesContainer.html("");
+
+        // Split by newlines
+        const lines = sourcesText.split('\n');
+
+        lines.forEach(line => {
+            if (line.trim()) {
+                sourcesContainer.append("div")
+                    .attr("class", "source-detail-item")
+                    .text(line.trim());
+            }
+        });
+
+        // Show container and header
+        sourcesContainer.style("display", "block").style("margin-bottom", "15px");
+        if (sourcesHeader) d3.select(sourcesHeader).style("display", "block");
+
     } else {
-        d3.select("#modal-sources").style("display", "none");
-        d3.select("#modal-sources").node().previousElementSibling.style.display = "none"; // Hide header
+        sourcesContainer.style("display", "none");
+        if (sourcesHeader) d3.select(sourcesHeader).style("display", "none");
     }
 
-    // Links (Placeholder logic as requested)
-    const links = d["Links"] || d["External Links"];
-    if (links) {
-        d3.select("#modal-links").text(links);
+    // --- Links (URL Sources) ---
+    const rawLinks = d.SourceLinks;
+    const linksContainer = d3.select("#modal-links");
+    const linksHeader = linksContainer.node().previousElementSibling;
+
+    // Clear the container first
+    linksContainer.html("");
+
+    // Only proceed if there is text
+    if (rawLinks && typeof rawLinks === 'string' && rawLinks.trim().length > 0) {
+
+        // Ensure Header is visible and set proper text
+        if (linksHeader && linksHeader.tagName === 'H4') {
+            d3.select(linksHeader).text("RELEVANT LINKS").style("display", "block");
+        }
+
+        // Start list
+        let listHtml = '<ul class="source-list">';
+        // Split by the double-pipe delimiter
+        const sourceList = rawLinks.split(" || ");
+
+        sourceList.forEach(sourceItem => {
+            if (!sourceItem || !sourceItem.trim()) return;
+
+            // Safe Split
+            const parts = sourceItem.split(" | ");
+
+            // Handle cases where there might be no title
+            let title = parts[0] ? parts[0].trim() : "Source";
+            let url = parts[1] ? parts[1].trim() : "#";
+
+            if (!url) url = "#";
+
+            // Fallback
+            if (parts.length === 1) {
+                title = "Reference Link";
+                url = parts[0].trim();
+            }
+
+            // Tag Extraction
+            let badgeHtml = "";
+            title = String(title);
+            const tagMatch = title.match(/\((public|internal)\)/i);
+            if (tagMatch) {
+                const tagType = tagMatch[1].toLowerCase();
+                const tagLabel = tagType.toUpperCase();
+                badgeHtml = `<span class="tag-badge ${tagType}">${tagLabel}</span>`;
+                title = title.replace(tagMatch[0], "").trim();
+            }
+
+            if (url && url !== "#") {
+                listHtml += `<li>
+                    <a href="${url}" target="_blank" class="source-link">
+                        ${title} <span class="external-icon">↗</span>
+                    </a>
+                    ${badgeHtml}
+                 </li>`;
+            }
+        });
+
+        listHtml += '</ul>';
+        linksContainer.html(listHtml);
+
     } else {
-        d3.select("#modal-links").html("<em>No external links available yet.</em>");
+        // Hide Links section if empty
+        linksContainer.html('');
+        if (linksHeader) {
+            d3.select(linksHeader).style("display", "none");
+        }
     }
 
     // Show Overlay
