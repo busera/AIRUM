@@ -1,4 +1,8 @@
 // Configuration
+// Configuration
+let selectedProcess = "All";
+let selectedNIST = "All"; // New state for filter intersection
+
 const config = {
     hex_radius: 60,     // Increased size for visibility
     colors: [
@@ -244,8 +248,14 @@ async function init() {
         .style("justify-content", "center")
         .text(d => d["Risk Name"] || d["Risk Title"] || d["Risk"] || d["Sub-Process Name"] || "");
 
-    // Generate Filter Controls
+    // Generate Process Filter Controls
     createFilterControls(processNames, config.colors);
+
+    // Generate NIST Filter Controls
+    // Extract unique NIST stages
+    const nistStagesSet = new Set(processedData.map(d => d["NIST AI Lifecycle Stage"]).filter(x => x)); // filter out undefined/null
+    const nistStages = Array.from(nistStagesSet).sort();
+    createNISTFilterControls(nistStages);
 
     // 2. Implement 'Auto-Center' Logic
     centerMap(svg, g, zoom, width, height);
@@ -292,43 +302,36 @@ function createFilterControls(processNames, colors) {
     container.html(""); // Clear existing
 
     // Add "Show All" button
-    const allBtn = container.append("button")
-        .attr("class", "filter-btn active")
+    container.append("button")
+        .attr("class", "filter-btn active") // Default active
+        .attr("data-val", "All")
         .style("background-color", "#666")
         .text("Show All")
         .on("click", function () {
-            // Reset state
-            d3.selectAll(".filter-btn").classed("active", false);
-            d3.select(this).classed("active", true);
+            selectedProcess = "All";
+            updateViz();
 
-            // Show all hexes
-            d3.selectAll(".hex-group")
-                .transition().duration(750)
-                .style("opacity", 1)
-                .style("pointer-events", "all");
+            // UI Update
+            d3.selectAll("#filter-container .filter-btn").classed("active", false);
+            d3.select(this).classed("active", true);
         });
 
     // Add Process Buttons
     processNames.forEach((proc, i) => {
         const color = colors[i % colors.length];
-        // Shorten name if too long? No, keep full name for clarity or maybe truncate?
-        // User asked for "Process Name", so we use full name.
 
         container.append("button")
             .attr("class", "filter-btn")
+            .attr("data-val", proc)
             .style("background-color", color)
             .text(proc)
             .on("click", function () {
-                // Update active state
-                d3.selectAll(".filter-btn").classed("active", false);
-                d3.select(this).classed("active", true);
+                selectedProcess = proc;
+                updateViz();
 
-                // Filter Hexes
-                // Select all and transition
-                d3.selectAll(".hex-group")
-                    .transition().duration(750)
-                    .style("opacity", (d) => d["Process Name"] === proc ? 1 : 0.1)
-                    .style("pointer-events", (d) => d["Process Name"] === proc ? "all" : "none");
+                // UI Update
+                d3.selectAll("#filter-container .filter-btn").classed("active", false);
+                d3.select(this).classed("active", true);
             });
     });
 
@@ -337,6 +340,56 @@ function createFilterControls(processNames, colors) {
         .attr("class", "filter-btn about-btn")
         .text("Methodology")
         .on("click", openInfoModal);
+}
+
+function createNISTFilterControls(stages) {
+    const container = d3.select("#nist-filter-container");
+    container.html(""); // Clear existing
+
+    // Add "All Stages" button
+    container.append("button")
+        .attr("class", "nist-filter-btn active") // Default active
+        .attr("data-val", "All")
+        .text("All Stages")
+        .on("click", function () {
+            selectedNIST = "All";
+            updateViz();
+
+            // UI Update
+            d3.selectAll("#nist-filter-container .nist-filter-btn").classed("active", false);
+            d3.select(this).classed("active", true);
+        });
+
+    // Add Stage Buttons
+    stages.forEach(stage => {
+        container.append("button")
+            .attr("class", "nist-filter-btn")
+            .attr("data-val", stage)
+            .text(stage)
+            .on("click", function () {
+                selectedNIST = stage;
+                updateViz();
+
+                // UI Update
+                d3.selectAll("#nist-filter-container .nist-filter-btn").classed("active", false);
+                d3.select(this).classed("active", true);
+            });
+    });
+}
+
+function updateViz() {
+    d3.selectAll(".hex-group")
+        .transition().duration(750)
+        .style("opacity", (d) => {
+            const matchesProcess = (selectedProcess === 'All' || d["Process Name"] === selectedProcess);
+            const matchesNIST = (selectedNIST === 'All' || d["NIST AI Lifecycle Stage"] === selectedNIST);
+            return (matchesProcess && matchesNIST) ? 1 : 0.1;
+        })
+        .style("pointer-events", (d) => {
+            const matchesProcess = (selectedProcess === 'All' || d["Process Name"] === selectedProcess);
+            const matchesNIST = (selectedNIST === 'All' || d["NIST AI Lifecycle Stage"] === selectedNIST);
+            return (matchesProcess && matchesNIST) ? "all" : "none";
+        });
 }
 
 async function loadData() {
@@ -396,22 +449,21 @@ function openDetailView(d) {
 
     d3.select("#modal-subheader").text(d["Sub-Process Name"] || "");
 
-    // Inject NIST Badge if not present
-    let nistBadge = d3.select("#modal-nist-badge");
-    if (nistBadge.empty()) {
-        nistBadge = d3.select(".overlay-content")
-            .insert("div", "#modal-title") // Insert before Title
-            .attr("id", "modal-nist-badge")
-            .attr("class", "nist-badge");
+    // Inject NIST Badge Container if not present
+    let metaRow = d3.select(".modal-meta-row");
+    if (metaRow.empty()) {
+        metaRow = d3.select(".overlay-content")
+            .insert("div", "#modal-title") // Insert before Title (which is after Subheader)
+            .attr("class", "modal-meta-row");
     }
 
     // Populate NIST Badge
     const nistValue = d["NIST AI Lifecycle Stage"];
     if (nistValue) {
-        nistBadge.text(`AI Lifecycle Stage (by NIST): ${nistValue}`)
-            .style("display", "inline-block");
+        metaRow.html(`<span class="nist-badge">NIST Stage: ${nistValue}</span>`)
+            .style("display", "block");
     } else {
-        nistBadge.style("display", "none");
+        metaRow.style("display", "none");
     }
 
     // Title: Risk Name preferred, else sub-process

@@ -342,3 +342,64 @@ header h1 {
     letter-spacing: 0.5px;
     border: 1px solid #ddd;
 }
+
+/* NIST Filter Container & Buttons */
+#nist-filter-container {
+    width: 100%;
+    padding: 5px 10px 15px 10px; /* slightly less top padding, more bottom */
+    background: #222;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    z-index: 5;
+    position: relative;
+    border-bottom: 1px solid #333;
+}
+
+.nist-filter-btn {
+    border: 1px solid #555;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background-color: #333;
+    color: #fff;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.9;
+}
+
+.nist-filter-btn:hover {
+    background-color: #444;
+    border-color: #777;
+    transform: translateY(-1px);
+}
+
+.nist-filter-btn.active {
+    background-color: #fff;
+    color: #000;
+    border-color: #fff;
+    font-weight: 700;
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+/* Updated NIST Badge Style per request */
+.nist-badge {
+    background-color: #444 !important; /* Override previous */
+    color: #fff !important;
+    padding: 4px 12px !important;
+    border-radius: 12px !important;
+    font-size: 0.85rem !important;
+    display: inline-block !important;
+    margin-bottom: 15px !important;
+    border: none !important; /* Removing previous border */
+    text-transform: none !important; /* Resetting transform if needed */
+    letter-spacing: normal !important;
+}
+
+.modal-meta-row {
+    margin-bottom: 5px;
+}
